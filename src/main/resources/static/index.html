@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보험설계사 스마트 워크스페이스 - Dashboard</title>
+    <!-- Google Fonts: Outfit (headings) & Inter (body) -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Animated background glowing blobs for Glassmorphism depth -->
+    <div class="bg-glow-container">
+        <div class="glow-blob blob-1"></div>
+        <div class="glow-blob blob-2"></div>
+        <div class="glow-blob blob-3"></div>
+    </div>
+
+    <div class="app-container">
+        <header class="main-header">
+            <div class="sidebar-header">
+                <div class="logo-box">
+                    <!-- i data-lucide="shield" class="logo-icon"></i-->
+                    <img src="logo.png" alt="수협 로고" class="logo-icon"
+                        style="width: 26px; height: auto; object-fit: contain;">
+                    <span>ODS 시스템</span>
+                </div>
+            </div>
+            <div class="header-right-group">
+                <div class="user-profile-glass">
+                    <div class="avatar-container">
+                        <div class="avatar-ring"></div>
+                        <img src="unnamed.jpg" alt="Agent Profile" class="avatar-img" id="agent-avatar">
+                    </div>
+                    <div class="user-info">
+                        <h3>김광용 설계사</h3>
+                        <p class="user-rank">수석 컨설턴트</p>
+                        <span class="status-badge online">영업 활성화</span>
+                    </div>
+                </div>
+
+                <div class="donut-menu-container">
+
+
+                    <nav class="nav-menu" id="donutNavMenu">
+                        <a href="#" class="nav-item active" data-tab="dashboard">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>종합 대시보드</span>
+                        </a>
+                        <a href="#" class="nav-item" data-tab="clients">
+                            <i data-lucide="users"></i>
+                            <span>Marketing 고객 관리</span>
+                        </a>
+                        <a href="#" class="nav-item">
+                            <i data-lucide="file-text"></i>
+                            <span>가입설계/청약</span>
+                        </a>
+                        <a href="#" class="nav-item" data-tab="calendar">
+                            <i data-lucide="calendar"></i>
+                            <span>캘린더 & 다이어리</span>
+                        </a>
+
+                        <a href="#" class="nav-item">
+                            <i data-lucide="trending-up"></i>
+                            <span>통계/실적</span>
+                        </a>
+                        <a href="#" class="nav-item" data-tab="tasks">
+                            <i data-lucide="check-square"></i>
+                            <span>영업 할 일 목록</span>
+                        </a>
+                        <div class="nav-divider"></div>
+                        <a href="#" class="nav-item text-danger">
+                            <i data-lucide="log-out"></i>
+                            <span>로그아웃</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <div class="sidebar-footer">
+                    <p>© 2026 ODS System</p>
+                    <span class="version-label">v1.2.0</span>
+                </div>
+            </div>
+        </header>
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <header class="top-nav">
+                <div class="nav-welcome">
+                    <h1 id="page-title">종합 대시보드</h1>
+                    <p id="current-date-display">2026년 6월 8일 월요일</p>
+                </div>
+                <div class="nav-actions">
+                    <div class="notification-bell">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-badge" id="alert-count">3</span>
+                    </div>
+                    <div class="quick-stats-mini">
+                        <span class="mini-stat-label">이달의 목표 달성</span>
+                        <div class="progress-mini-bar">
+                            <div class="progress-mini-fill" id="goal-progress-fill" style="width: 78%;"></div>
+                        </div>
+                        <span class="mini-stat-value" id="goal-progress-text">78%</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Tabs Container -->
+            <div class="content-body">
+
+                <!-- TAB 1: DASHBOARD -->
+                <section id="tab-dashboard" class="tab-pane active">
+                    <!-- Dashboard Statistics Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon-wrapper blue">
+                                <i data-lucide="calendar-days"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-title">오늘의 상담</span>
+                                <h2 class="stat-value" id="stat-today-meetings">3 건</h2>
+                                <p class="stat-desc">신규 가망 고객 미팅 포함</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon-wrapper purple">
+                                <i data-lucide="file-check"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-title">심사 대기건</span>
+                                <h2 class="stat-value" id="stat-pending-reviews">2 건</h2>
+                                <p class="stat-desc">화재보험 1건, 건강보험 1건</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon-wrapper orange">
+                                <i data-lucide="refresh-cw"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-title">만기/갱신 대상</span>
+                                <h2 class="stat-value" id="stat-upcoming-renewals">5 건</h2>
+                                <p class="stat-desc">30일 이내 계약 갱신 필요</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card glass-panel">
+                            <div class="stat-icon-wrapper green">
+                                <i data-lucide="trending-up"></i>
+                            </div>
+                            <div class="stat-data">
+                                <span class="stat-title">이달의 신규 계약</span>
+                                <h2 class="stat-value" id="stat-monthly-contracts">8 건</h2>
+                                <p class="stat-desc">누적 환산 실적 우수</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Today's Schedule & Goal Analysis -->
+                    <div class="dashboard-row">
+                        <!-- Today's Schedule Timeline -->
+                        <div class="dash-column glass-panel">
+                            <div class="panel-header">
+                                <h3>오늘의 영업 타임라인</h3>
+                                <button class="btn-icon-text" id="btn-goto-calendar">
+                                    <i data-lucide="chevron-right"></i>
+                                    캘린더 보기
+                                </button>
+                            </div>
+                            <div class="timeline-container" id="dash-timeline">
+                                <!-- Dynamic timeline nodes -->
+                                <div class="timeline-empty">오늘 등록된 미팅 일정이 없습니다.</div>
+                            </div>
+                        </div>
+
+                        <!-- Target Goal and Alert Box -->
+                        <div class="dash-column flex-col gap-lg">
+                            <!-- Goal Progress Radial Glass Card -->
+                            <div class="goal-card glass-panel">
+                                <h3>6월 목표 달성 추이</h3>
+                                <div class="goal-chart-container">
+                                    <div class="goal-circular-progress">
+                                        <div class="value-container" id="goal-radial-value">78%</div>
+                                    </div>
+                                    <div class="goal-details">
+                                        <div class="goal-target">목표: <b>환산 1,000만 원</b></div>
+                                        <div class="goal-current">달성: <b id="goal-current-amount">780만 원</b></div>
+                                        <p class="goal-encouragement">수석 승급까지 220만 원 남았습니다!</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Real-time Alerts -->
+                            <div class="alerts-card glass-panel">
+                                <h3>실시간 고객 관리 알림</h3>
+                                <ul class="alert-list" id="dash-alerts"
+                                    style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                                    <li class="alert-item warn">
+                                        <i data-lucide="alert-circle" class="alert-icon"></i>
+                                        <div class="alert-text">
+                                            <strong>홍길동 고객님</strong> 만기일 D-7 (실비보험)
+                                        </div>
+                                    </li>
+                                    <li class="alert-item info">
+                                        <i data-lucide="gift" class="alert-icon"></i>
+                                        <div class="alert-text">
+                                            <strong>이영희 고객님</strong> 내일 생일 (기념품 발송 제안)
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: CALENDAR & DIARY -->
+                <section id="tab-calendar" class="tab-pane">
+                    <div class="calendar-workspace">
+                        <!-- Calendar Glass Panel -->
+                        <div class="calendar-main-panel glass-panel">
+                            <div class="calendar-header">
+                                <div class="calendar-title-wrapper">
+                                    <h2 id="calendar-month-year">2026년 6월</h2>
+                                </div>
+                                <div class="calendar-nav-buttons">
+                                    <button class="btn-nav" id="prev-month-btn">
+                                        <i data-lucide="chevron-left"></i>
+                                    </button>
+                                    <button class="btn-text-light" id="today-btn">오늘</button>
+                                    <button class="btn-nav" id="next-month-btn">
+                                        <i data-lucide="chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="calendar-grid-header">
+                                <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+                            </div>
+
+                            <div class="calendar-grid-body" id="calendar-days-grid">
+                                <!-- JS fills days here -->
+                            </div>
+                        </div>
+
+                        <!-- Diary & Daily Details Side Panel -->
+                        <div class="calendar-side-panel glass-panel">
+                            <div class="side-panel-header">
+                                <h3 id="selected-date-title">6월 8일 (월) 일정 & 상담 일지</h3>
+                            </div>
+
+                            <!-- Events List for Selected Day -->
+                            <div class="day-events-section">
+                                <h4>오늘의 일정</h4>
+                                <div class="events-list" id="day-events-list">
+                                    <!-- Dynamic elements from JS -->
+                                    <div class="events-empty">등록된 일정이 없습니다.</div>
+                                </div>
+                                <button class="btn-primary w-full mt-sm" id="btn-open-event-modal">
+                                    <i data-lucide="plus"></i>
+                                    신규 일정 추가
+                                </button>
+                            </div>
+
+                            <hr class="panel-divider">
+
+                            <!-- Client Consultation Diary Form -->
+                            <div class="day-diary-section">
+                                <div class="diary-header-row">
+                                    <h4>상담 일지 및 활동 메모</h4>
+                                    <span class="save-status-indicator" id="diary-save-status">자동 저장됨</span>
+                                </div>
+                                <textarea id="day-diary-textarea"
+                                    placeholder="상담 세부 내용, 청약 진행 상태 등 특이 사항을 자유롭게 기록하세요..."
+                                    class="glass-textarea"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3: TO DO LIST -->
+                <section id="tab-tasks" class="tab-pane">
+                    <div class="tasks-workspace">
+                        <!-- Task Control Header -->
+                        <div class="tasks-header glass-panel">
+                            <div class="search-filter-row">
+                                <div class="glass-search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="task-search-input" placeholder="영업 할 일 검색...">
+                                </div>
+                                <div class="category-filters">
+                                    <button class="btn-filter active" data-filter="all">전체</button>
+                                    <button class="btn-filter" data-filter="consult">상담</button>
+                                    <button class="btn-filter" data-filter="contract">계약/청약</button>
+                                    <button class="btn-filter" data-filter="review">인수심사</button>
+                                    <button class="btn-filter" data-filter="care">고객케어</button>
+                                </div>
+                            </div>
+                            <div class="task-stats-bar">
+                                <div class="task-stat">
+                                    <span class="label">진행중</span>
+                                    <span class="value count-progress" id="count-todo-progress">0</span>
+                                </div>
+                                <div class="task-stat">
+                                    <span class="label">긴급(높음)</span>
+                                    <span class="value count-high" id="count-todo-high">0</span>
+                                </div>
+                                <div class="task-stat">
+                                    <span class="label">완료됨</span>
+                                    <span class="value count-done" id="count-todo-completed">0</span>
+                                </div>
+                                <button class="btn-accent" id="btn-open-task-modal">
+                                    <i data-lucide="plus"></i>
+                                    할 일 추가
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Task Cards Container -->
+                        <div class="tasks-grid-list" id="tasks-list-container">
+                            <!-- Dynamic rendering -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: CLIENT MANAGEMENT -->
+                <section id="tab-clients" class="tab-pane">
+                    <div class="clients-workspace">
+                        <div class="clients-actions-header glass-panel">
+                            <div class="glass-search-box">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="client-search-input" placeholder="고객 이름 또는 전화번호 검색...">
+                            </div>
+                            <button class="btn-primary" id="btn-open-client-modal">
+                                <i data-lucide="user-plus"></i>
+                                Marketing 고객 추가
+                            </button>
+                        </div>
+
+                        <div class="client-filters glass-panel">
+                            <button class="btn-filter-client active" data-filter="all">전체보기</button>
+                            <button class="btn-filter-client" data-filter="prospect">가망고객</button>
+                            <button class="btn-filter-client" data-filter="potential">잠재고객</button>
+                            <button class="btn-filter-client" data-filter="allocated">배분고객</button>
+                            <button class="btn-filter-client" data-filter="managed">소관고객</button>
+                        </div>
+
+                        <!-- Clients Grid -->
+                        <div class="clients-grid" id="clients-grid-container">
+                            <!-- Dynamic clients from JS -->
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL 1: EVENT ADD MODAL -->
+    <div class="modal-overlay" id="event-modal">
+        <div class="modal-box glass-panel animated-modal">
+            <div class="modal-header">
+                <h3>신규 일정 등록</h3>
+                <button class="btn-close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <form id="event-form" class="modal-form">
+                <div class="form-group">
+                    <label for="event-title">일정명</label>
+                    <input type="text" id="event-title" required placeholder="예: 실비보험 설계 제안 미팅">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="event-time">시간</label>
+                        <input type="time" id="event-time" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-type">일정 분류</label>
+                        <select id="event-type">
+                            <option value="meeting">방문/상담 미팅</option>
+                            <option value="call">전화 상담</option>
+                            <option value="sign">계약/서명</option>
+                            <option value="etc">기타 일정</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="event-client">연계 고객 (선택)</label>
+                    <select id="event-client-select">
+                        <option value="">고객을 선택해 주세요</option>
+                        <!-- Client list will populate here -->
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-text-light btn-close-modal">취소</button>
+                    <button type="submit" class="btn-primary">저장하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: TASK ADD MODAL -->
+    <div class="modal-overlay" id="task-modal">
+        <div class="modal-box glass-panel animated-modal">
+            <div class="modal-header">
+                <h3>할 일 추가</h3>
+                <button class="btn-close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <form id="task-form" class="modal-form">
+                <div class="form-group">
+                    <label for="task-title">할 일 제목</label>
+                    <input type="text" id="task-title" required placeholder="예: 암보험 가입 제안서 메일 발송">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="task-category">카테고리</label>
+                        <select id="task-category">
+                            <option value="consult">상담 준비</option>
+                            <option value="contract">계약/청약 진행</option>
+                            <option value="review">인수 심사 대응</option>
+                            <option value="care">고객 관리/케어</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-priority">우선순위</label>
+                        <select id="task-priority">
+                            <option value="high">긴급 (높음)</option>
+                            <option value="medium" selected>보통</option>
+                            <option value="low">낮음</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="task-date">마감 기한</label>
+                    <input type="date" id="task-date" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-text-light btn-close-modal">취소</button>
+                    <button type="submit" class="btn-accent">추가하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: CLIENT ADD MODAL -->
+    <div class="modal-overlay" id="client-modal">
+        <div class="modal-box glass-panel animated-modal">
+            <div class="modal-header">
+                <h3>고객 등록</h3>
+                <button class="btn-close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <form id="client-form" class="modal-form">
+                <div class="form-group">
+                    <label for="client-name">고객명</label>
+                    <input type="text" id="client-name" required placeholder="예: 홍길동">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="client-phone">전화번호</label>
+                        <input type="tel" id="client-phone" required placeholder="010-1234-5678">
+                    </div>
+                    <div class="form-group">
+                        <label for="client-type">고객 분류</label>
+                        <select id="client-type">
+                            <option value="prospect">가망고객 (접촉단계)</option>
+                            <option value="potential">잠재고객 (계약가능성↑, 정보활용동의)</option>
+                            <option value="allocated">배분고객 (기계약 할당)</option>
+                            <option value="managed" selected>소관고객 (본인 계약체결)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="client-policy">보유중인 보험 상품 / 관심 상품</label>
+                    <input type="text" id="client-policy" placeholder="예: 실손의료비보장보험, 종합통합보험">
+                </div>
+                <div class="form-group">
+                    <label for="client-notes">관리 메모</label>
+                    <textarea id="client-notes" placeholder="고객의 성향, 특이사항, 가족력 정보 등을 자유롭게 메모하세요..."
+                        class="glass-textarea-small"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-text-light btn-close-modal">취소</button>
+                    <button type="submit" class="btn-primary">등록하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: NOTIFICATION BELL ALERT LIST MODAL -->
+    <div class="modal-overlay" id="alert-list-modal">
+        <div class="modal-box glass-panel animated-modal" style="max-width: 480px;">
+            <div class="modal-header">
+                <div style="display:flex; align-items:center; gap:0.6rem;">
+                    <i data-lucide="bell" style="width:20px;height:20px;stroke:var(--accent-blue);"></i>
+                    <h3>실시간 고객 관리 알림</h3>
+                </div>
+                <button class="btn-close-modal" id="alert-list-modal-close">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <ul class="alert-list" id="alert-modal-list" style="margin-top:0.5rem; max-height:420px; overflow-y:auto;">
+                <!-- 알림 항목이 JS에 의해 동적으로 삽입됩니다 -->
+            </ul>
+            <div class="modal-actions" style="margin-top:0.5rem;">
+                <button class="btn-text-light btn-close-modal" id="alert-list-modal-ok">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Logic Script -->
+    <script src="app.js"></script>
+</body>
+
+</html>

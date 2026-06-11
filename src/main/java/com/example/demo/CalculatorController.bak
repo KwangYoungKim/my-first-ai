@@ -1,0 +1,37 @@
+package com.example.demo;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class CalculatorController {
+
+    @GetMapping("/api/calc")
+    public String calculate(
+            @RequestParam("a") double a,
+            @RequestParam("b") double b,
+            @RequestParam("op") String op) {
+        double result;
+        switch (op) {
+            case "+":
+                result = a + b;
+                break;
+            case "-":
+                result = a - b;
+                break;
+            case "*":
+                result = a * b;
+                break;
+            case "/":
+                if (b == 0) {
+                    return "Error: Division by zero";
+                }
+                result = a / b;
+                break;
+            default:
+                return "Error: Unknown operator";
+        }
+        return String.valueOf(result);
+    }
+}
