@@ -81,7 +81,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 dashboard: "종합 대시보드",
                 calendar: "캘린더 & 다이어리",
                 tasks: "영업 할 일 목록",
-                clients: "Marketing 고객 관리"
+                clients: "Marketing 고객 관리",
+                subscription: "가입설계/청약"
             };
             pageTitle.textContent = tabNames[tabId];
 
@@ -865,6 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
 // 알림 모달창 기능
 document.addEventListener('DOMContentLoaded', () => {
     const notificationBell = document.querySelector('.notification-bell');
@@ -929,4 +931,280 @@ function populateAlertModal() {
     });
     
     lucide.createIcons();
+}
+
+// ====================================================
+// 가입설계/청약 (Subscription) Logic
+// ====================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Stepper Navigation (자유로운 이동)
+    const nextButtons = document.querySelectorAll('.btn-next-step');
+    const prevButtons = document.querySelectorAll('.btn-prev-step');
+    const steps = document.querySelectorAll('.stepper-header .step');
+    const stepContents = document.querySelectorAll('.step-content');
+
+    function goToStep(targetStepNum) {
+        // Update Stepper UI
+        steps.forEach(step => {
+            const stepNum = parseInt(step.getAttribute('data-step'));
+            if (stepNum <= targetStepNum) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
+
+        // Update Content Visibility
+        stepContents.forEach(content => {
+            content.style.display = 'none';
+            content.classList.remove('active');
+        });
+        const targetContent = document.getElementById(`step-content-${targetStepNum}`);
+        if (targetContent) {
+            targetContent.style.display = 'block';
+            // Trigger reflow for animation
+            setTimeout(() => targetContent.classList.add('active'), 10);
+        }
+
+        // Render chart if entering Step 4
+        if (targetStepNum === 4) {
+            renderRadarChart();
+        }
+    }
+
+    nextButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const nextStep = parseInt(btn.getAttribute('data-next'));
+            goToStep(nextStep);
+        });
+    });
+
+    prevButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const prevStep = parseInt(btn.getAttribute('data-prev'));
+            goToStep(prevStep);
+        });
+    });
+
+    steps.forEach(step => {
+        step.addEventListener('click', () => {
+            const stepNum = parseInt(step.getAttribute('data-step'));
+            goToStep(stepNum);
+        });
+    });
+
+    // 2. Plan Tabs in Step 2 (내 보관함 기능 추가)
+    const planTabs = document.querySelectorAll('#step-content-2 .btn-tab');
+    const defaultPlansGrid = document.querySelector('#step-content-2 .plans-grid:not(.custom-plans-container)');
+    const customPlansContainer = document.querySelector('.custom-plans-container');
+
+    planTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            planTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            if (tab.textContent.includes('내 보관함')) {
+                defaultPlansGrid.style.display = 'none';
+                customPlansContainer.style.display = 'grid';
+                renderCustomPlans();
+            } else {
+                defaultPlansGrid.style.display = 'grid';
+                customPlansContainer.style.display = 'none';
+            }
+        });
+    });
+
+    // 3. Accordion in Step 3
+    const accordionHeaders = document.querySelectorAll('.accordion-header');
+    accordionHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const item = header.parentElement;
+            const body = item.querySelector('.accordion-body');
+            const icon = header.querySelector('.acc-icon');
+            
+            item.classList.toggle('expanded');
+            if (item.classList.contains('expanded')) {
+                body.style.display = 'block';
+                if(icon) icon.setAttribute('data-lucide', 'chevron-up');
+            } else {
+                body.style.display = 'none';
+                if(icon) icon.setAttribute('data-lucide', 'chevron-down');
+            }
+            lucide.createIcons();
+        });
+    });
+
+    // 4. Async Skeleton Loading Simulation (Premium Calculation)
+    const cancerSlider = document.getElementById('slider-cancer');
+    const valCancer = document.getElementById('val-cancer');
+    const premiumCancer = document.getElementById('premium-cancer');
+    const totalPremiumVal = document.getElementById('total-premium-val');
+    const premiumSkeleton = document.getElementById('premium-skeleton');
+    
+    let calcTimeout;
+
+    if (cancerSlider) {
+        cancerSlider.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            valCancer.textContent = val.toLocaleString();
+            
+            // Show skeleton loader
+            if(premiumSkeleton) premiumSkeleton.style.display = 'flex';
+            
+            clearTimeout(calcTimeout);
+            calcTimeout = setTimeout(() => {
+                // Mock calculation: 45000 is base. cancer premium varies
+                const cancerCost = Math.round(val * 0.9);
+                premiumCancer.textContent = cancerCost.toLocaleString() + '원';
+                
+                const baseOtherCosts = 40500;
+                const total = baseOtherCosts + cancerCost;
+                totalPremiumVal.textContent = total.toLocaleString() + ' 원';
+                
+                // Hide skeleton loader
+                if(premiumSkeleton) premiumSkeleton.style.display = 'none';
+            }, 800); // 0.8s fake async delay
+        });
+    }
+
+    // 5. Save Custom Plan
+    const btnSaveCustom = document.getElementById('btn-save-custom-plan');
+    if (btnSaveCustom) {
+        btnSaveCustom.addEventListener('click', () => {
+            const currentTotalStr = totalPremiumVal ? totalPremiumVal.textContent.replace(/[^0-9]/g, '') : '45000';
+            const cancerValStr = valCancer ? valCancer.textContent.replace(/[^0-9]/g, '') : '5000';
+            
+            const newPlan = {
+                id: 'plan-' + Date.now(),
+                name: `맞춤형 설계 플랜 (${new Date().toLocaleDateString('ko-KR')})`,
+                price: parseInt(currentTotalStr),
+                cancer: parseInt(cancerValStr)
+            };
+            
+            let savedPlans = JSON.parse(localStorage.getItem('customPlans') || '[]');
+            savedPlans.push(newPlan);
+            localStorage.setItem('customPlans', JSON.stringify(savedPlans));
+            
+            alert('나만의 플랜이 성공적으로 저장되었습니다!');
+            goToStep(2); // 플랜 선택 단계로 이동
+            
+            // 내 보관함 탭 활성화
+            planTabs.forEach(t => t.classList.remove('active'));
+            const customTab = Array.from(planTabs).find(t => t.textContent.includes('내 보관함'));
+            if (customTab) {
+                customTab.classList.add('active');
+                if (defaultPlansGrid) defaultPlansGrid.style.display = 'none';
+                if (customPlansContainer) {
+                    customPlansContainer.style.display = 'grid';
+                    renderCustomPlans();
+                }
+            }
+        });
+    }
+
+    function renderCustomPlans() {
+        if (!customPlansContainer) return;
+        const savedPlans = JSON.parse(localStorage.getItem('customPlans') || '[]');
+        customPlansContainer.innerHTML = '';
+        
+        if (savedPlans.length === 0) {
+            customPlansContainer.innerHTML = `
+                <div class="glass-panel" style="grid-column: 1/-1; padding: 3rem; text-align: center; color: var(--text-muted);">
+                    저장된 커스텀 플랜이 없습니다. 설계 완료 후 '나만의 플랜으로 저장'을 이용해보세요.
+                </div>
+            `;
+            return;
+        }
+
+        savedPlans.forEach(plan => {
+            const card = document.createElement('div');
+            card.className = 'plan-card glass-panel';
+            card.innerHTML = `
+                <h4 style="margin-bottom:10px;">${plan.name}</h4>
+                <p class="plan-desc text-secondary" style="font-size:0.9rem; margin-bottom:15px;">내가 수정한 보장 세팅</p>
+                <ul class="plan-features" style="list-style:none; padding:0; margin-bottom:20px; font-size:0.95rem;">
+                    <li style="margin-bottom:8px;"><i data-lucide="check" style="width:16px; color:var(--accent-blue); margin-right:5px; vertical-align:middle;"></i> 암진단비 ${plan.cancer.toLocaleString()}만</li>
+                    <li style="margin-bottom:8px;"><i data-lucide="check" style="width:16px; color:var(--accent-blue); margin-right:5px; vertical-align:middle;"></i> 뇌/허혈성 기본 유지</li>
+                </ul>
+                <div class="plan-footer" style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; margin-top:auto;">
+                    <span class="plan-price" style="display:block; font-size:1.1rem; font-weight:700; margin-bottom:10px;">월 예상 ${plan.price.toLocaleString()}원~</span>
+                    <button class="btn-primary btn-next-step-custom w-full">이 플랜으로 다시 설계</button>
+                    <button class="btn-outline btn-delete-plan w-full mt-sm" style="margin-top:5px; border-color:var(--accent-red); color:var(--accent-red);">삭제</button>
+                </div>
+            `;
+
+            const startBtn = card.querySelector('.btn-next-step-custom');
+            startBtn.addEventListener('click', () => goToStep(3));
+
+            const delBtn = card.querySelector('.btn-delete-plan');
+            delBtn.addEventListener('click', () => {
+                let currentPlans = JSON.parse(localStorage.getItem('customPlans') || '[]');
+                currentPlans = currentPlans.filter(p => p.id !== plan.id);
+                localStorage.setItem('customPlans', JSON.stringify(currentPlans));
+                renderCustomPlans();
+            });
+
+            customPlansContainer.appendChild(card);
+        });
+        lucide.createIcons();
+    }
+});
+
+// Radar Chart Rendering
+let radarChartInstance = null;
+function renderRadarChart() {
+    const ctx = document.getElementById('coverageRadarChart');
+    if (!ctx) return;
+    
+    // Destroy previous instance if it exists
+    if (radarChartInstance) {
+        radarChartInstance.destroy();
+    }
+
+    const data = {
+        labels: ['암 진단비', '뇌혈관 진단비', '허혈성 진단비', '수술비', '입원일당', '후유장해'],
+        datasets: [{
+            label: '현재 설계 플랜',
+            data: [65, 90, 80, 100, 70, 85],
+            backgroundColor: 'rgba(59, 130, 246, 0.4)', // accent-blue with opacity
+            borderColor: 'rgba(59, 130, 246, 1)',
+            pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(59, 130, 246, 1)'
+        }, {
+            label: '동일 연령대 평균',
+            data: [90, 75, 75, 80, 60, 70],
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderColor: 'rgba(255, 255, 255, 0.5)',
+            borderDash: [5, 5],
+            pointBackgroundColor: 'rgba(255, 255, 255, 0.5)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(255, 255, 255, 0.5)'
+        }]
+    };
+
+    const config = {
+        type: 'radar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    pointLabels: { color: 'rgba(255,255,255,0.7)', font: { size: 12, family: 'Inter' } },
+                    ticks: { display: false, min: 0, max: 100 }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: 'rgba(255,255,255,0.8)', font: { family: 'Inter' } } }
+            }
+        }
+    };
+
+    radarChartInstance = new Chart(ctx, config);
 }

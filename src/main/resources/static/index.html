@@ -10,6 +10,8 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap"
         rel="stylesheet">
     <!-- Lucide Icons -->
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -57,7 +59,7 @@
                             <i data-lucide="users"></i>
                             <span>Marketing 고객 관리</span>
                         </a>
-                        <a href="#" class="nav-item">
+                        <a href="#" class="nav-item" data-tab="subscription">
                             <i data-lucide="file-text"></i>
                             <span>가입설계/청약</span>
                         </a>
@@ -355,6 +357,248 @@
                         <div class="clients-grid" id="clients-grid-container">
                             <!-- Dynamic clients from JS -->
                         </div>
+                    </div>
+                </section>
+
+                <!-- TAB 5: SUBSCRIPTION (가입설계/청약) -->
+                <section id="tab-subscription" class="tab-pane">
+                    <div class="subscription-workspace">
+                        <!-- Stepper Navigation -->
+                        <div class="stepper-header glass-panel">
+                            <div class="step active" data-step="1">
+                                <div class="step-circle">1</div>
+                                <span>고객 정보 입력</span>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step" data-step="2">
+                                <div class="step-circle">2</div>
+                                <span>플랜 선택</span>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step" data-step="3">
+                                <div class="step-circle">3</div>
+                                <span>상세 설계</span>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step" data-step="4">
+                                <div class="step-circle">4</div>
+                                <span>결과 분석</span>
+                            </div>
+                        </div>
+
+                        <!-- Step 1: Customer Info -->
+                        <div class="step-content active" id="step-content-1">
+                            <div class="glass-panel p-lg">
+                                <h3>계약자 및 피보험자 가입 기준 세팅</h3>
+                                <form class="mt-md form-grid" onsubmit="return false;">
+                                    <div class="form-group">
+                                        <label>주민등록번호 (생년월일/성별)</label>
+                                        <div style="display:flex; gap:10px;">
+                                            <input type="text" placeholder="YYMMDD" maxlength="6" style="flex:1;">
+                                            <span style="display:flex; align-items:center;">-</span>
+                                            <input type="password" placeholder="1XXXXXX" maxlength="7" style="flex:1;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>직업 검색 (상해급수 자동 매핑)</label>
+                                        <div class="glass-search-box w-full">
+                                            <i data-lucide="search"></i>
+                                            <input type="text" placeholder="직업 키워드 입력 (예: 사무직, 영업직)">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>운전 유형</label>
+                                        <select>
+                                            <option>자가용</option>
+                                            <option>영업용</option>
+                                            <option>이륜차</option>
+                                            <option>비운전</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="grid-column: 1 / -1;">
+                                        <label>5대 고지사항 간이 체크 (최근 3개월 병원 진료 등)</label>
+                                        <div class="checkbox-group mt-sm" style="display:flex; gap:20px; flex-wrap:wrap;">
+                                            <label style="display:flex; align-items:center; gap:5px;"><input type="checkbox"> 입원/수술 이력 있음</label>
+                                            <label style="display:flex; align-items:center; gap:5px;"><input type="checkbox"> 최근 1년내 추가검사 소견</label>
+                                            <label style="display:flex; align-items:center; gap:5px;"><input type="checkbox"> 최근 5년내 7대질병 치료력</label>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="step-actions right mt-lg" style="display:flex; justify-content:flex-end;">
+                                    <button class="btn-primary btn-next-step" data-next="2">플랜 선택으로 이동 <i data-lucide="arrow-right" style="margin-left:5px;"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Plan Selection Dashboard -->
+                        <div class="step-content" id="step-content-2" style="display:none;">
+                            <div class="plan-tabs-container" style="display:flex; gap:10px; margin-bottom:20px;">
+                                <button class="btn-tab active">🏢 회사 플랜 (Standard)</button>
+                                <button class="btn-tab">👨‍🏫 매니저 플랜 (Shared)</button>
+                                <button class="btn-tab">📁 내 보관함 (Custom)</button>
+                            </div>
+                            <div class="plans-grid mt-md" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+                                <div class="plan-card glass-panel" style="position:relative;">
+                                    <div class="plan-badge" style="position:absolute; top:-10px; right:20px; background:var(--accent-blue); color:white; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;">추천</div>
+                                    <h4 style="margin-bottom:10px;">3040 종합 보장 베스트 플랜</h4>
+                                    <p class="plan-desc text-secondary" style="font-size:0.9rem; margin-bottom:15px;">이달의 추천 상품. 3대 진단비 핵심 구성.</p>
+                                    <ul class="plan-features" style="list-style:none; padding:0; margin-bottom:20px; font-size:0.95rem;">
+                                        <li style="margin-bottom:8px;"><i data-lucide="check" style="width:16px; color:var(--success-color); margin-right:5px; vertical-align:middle;"></i> 암진단비 5천만</li>
+                                        <li style="margin-bottom:8px;"><i data-lucide="check" style="width:16px; color:var(--success-color); margin-right:5px; vertical-align:middle;"></i> 뇌/허혈성 3천만</li>
+                                        <li style="margin-bottom:8px;"><i data-lucide="check" style="width:16px; color:var(--success-color); margin-right:5px; vertical-align:middle;"></i> 수술비 종수술 1~5종</li>
+                                    </ul>
+                                    <div class="plan-footer" style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">
+                                        <span class="plan-price" style="display:block; font-size:1.1rem; font-weight:700; margin-bottom:10px; color:var(--accent-blue);">월 예상 45,000원~</span>
+                                        <button class="btn-primary btn-next-step w-full" data-next="3">이 플랜으로 설계 시작</button>
+                                    </div>
+                                </div>
+                                <div class="plan-card glass-panel">
+                                    <h4 style="margin-bottom:10px;">유병자 3.5.5 맞춤 플랜</h4>
+                                    <p class="plan-desc text-secondary" style="font-size:0.9rem; margin-bottom:15px;">간편고지 전용. 혈압/당뇨 보유자 추천.</p>
+                                    <ul class="plan-features" style="list-style:none; padding:0; margin-bottom:20px; font-size:0.95rem;">
+                                        <li style="margin-bottom:8px;"><i data-lucide="check" style="width:16px; color:var(--warning-color); margin-right:5px; vertical-align:middle;"></i> 암진단비 3천만</li>
+                                        <li style="margin-bottom:8px;"><i data-lucide="check" style="width:16px; color:var(--warning-color); margin-right:5px; vertical-align:middle;"></i> 뇌혈관/허혈성 1천만</li>
+                                    </ul>
+                                    <div class="plan-footer" style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; margin-top:auto;">
+                                        <span class="plan-price" style="display:block; font-size:1.1rem; font-weight:700; margin-bottom:10px;">월 예상 62,000원~</span>
+                                        <button class="btn-outline btn-next-step w-full" data-next="3">이 플랜으로 설계 시작</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="plans-grid custom-plans-container mt-md" style="display:none; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+                                <!-- 저장된 플랜 렌더링 영역 -->
+                            </div>
+                            <div class="step-actions mt-lg" style="display:flex; justify-content:flex-start; margin-top:20px;">
+                                <button class="btn-outline btn-prev-step" data-prev="1"><i data-lucide="arrow-left" style="margin-right:5px;"></i> 이전 단계로</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Detailed Planning Workspace -->
+                        <div class="step-content" id="step-content-3" style="display:none;">
+                            <div class="planning-workspace" style="display:grid; grid-template-columns: 2fr 1fr; gap:20px;">
+                                <div class="planning-left-grid glass-panel" style="max-height:600px; overflow-y:auto; padding-right:10px;">
+                                    <div class="panel-header" style="position:sticky; top:0; background:rgba(20,20,25,0.8); backdrop-filter:blur(10px); z-index:10; padding-bottom:10px; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                        <h3>담보/특약 설계</h3>
+                                        <div class="glass-search-box mt-sm">
+                                            <i data-lucide="search"></i>
+                                            <input type="text" placeholder="특약 검색...">
+                                        </div>
+                                    </div>
+                                    <div class="accordion-container">
+                                        <!-- 주계약 -->
+                                        <div class="accordion-item expanded">
+                                            <div class="accordion-header">
+                                                <h4>기본/주계약</h4>
+                                                <i data-lucide="chevron-up" class="acc-icon"></i>
+                                            </div>
+                                            <div class="accordion-body">
+                                                <div class="coverage-row">
+                                                    <div class="cov-info">
+                                                        <span class="cov-name">일반상해사망 (필수)</span>
+                                                        <span class="cov-premium">1,200원</span>
+                                                    </div>
+                                                    <div class="cov-amount-control">
+                                                        <button class="btn-circle-small">-</button>
+                                                        <input type="text" value="10,000" class="amount-input" readonly>
+                                                        <span>만</span>
+                                                        <button class="btn-circle-small">+</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 암 진단비 -->
+                                        <div class="accordion-item expanded">
+                                            <div class="accordion-header">
+                                                <h4>암 진단비/치료비</h4>
+                                                <i data-lucide="chevron-up" class="acc-icon"></i>
+                                            </div>
+                                            <div class="accordion-body">
+                                                <div class="coverage-row">
+                                                    <div class="cov-info">
+                                                        <span class="cov-name">일반암 진단비</span>
+                                                        <span class="cov-premium" id="premium-cancer">4,500원</span>
+                                                    </div>
+                                                    <div class="cov-slider-group">
+                                                        <input type="range" class="glass-slider" id="slider-cancer" min="1000" max="10000" step="1000" value="5000">
+                                                        <span class="slider-val"><span id="val-cancer">5,000</span>만</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 뇌/심혈관 -->
+                                        <div class="accordion-item">
+                                            <div class="accordion-header">
+                                                <h4>2대질환 (뇌/심혈관)</h4>
+                                                <i data-lucide="chevron-down" class="acc-icon"></i>
+                                            </div>
+                                            <div class="accordion-body" style="display:none;">
+                                                <p style="padding:10px; color:var(--text-secondary); text-align:center;">특약을 추가해보세요.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="planning-right-summary">
+                                    <div class="sticky-summary glass-panel" style="position:sticky; top:20px;">
+                                        <h3>실시간 보험료 요약</h3>
+                                        <div class="summary-details mt-md" style="font-size:0.9rem; margin-bottom:20px;">
+                                            <div class="sum-row" style="display:flex; justify-content:space-between; margin-bottom:10px;"><span class="text-secondary">납입기간/만기</span><span>20년납 90세만기</span></div>
+                                            <div class="sum-row" style="display:flex; justify-content:space-between;"><span class="text-secondary">갱신구분</span><span>비갱신형</span></div>
+                                        </div>
+                                        <hr class="panel-divider">
+                                        <div class="total-premium-box relative" style="margin-top:20px; text-align:right;">
+                                            <span class="label text-secondary" style="font-size:0.9rem;">월 납입 보험료</span>
+                                            <h2 id="total-premium-val" style="color:var(--accent-blue); font-size:2rem; margin-top:5px;">45,000 원</h2>
+                                            
+                                            <!-- Skeleton Loading Overlay -->
+                                            <div class="skeleton-overlay" id="premium-skeleton" style="display:none;">
+                                                <div class="skeleton-shimmer"></div>
+                                            </div>
+                                        </div>
+                                        <div style="display:flex; gap:10px; margin-top:30px;">
+                                            <button class="btn-outline w-full btn-prev-step" data-prev="2"><i data-lucide="arrow-left" style="margin-right:5px;"></i> 이전</button>
+                                            <button class="btn-primary w-full btn-next-step" data-next="4">설계 완료 <i data-lucide="check" style="margin-left:5px;"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Result Analysis -->
+                        <div class="step-content" id="step-content-4" style="display:none;">
+                            <div class="results-dashboard" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                                <div class="glass-panel chart-panel">
+                                    <h3 style="margin-bottom:20px;">보장 영역별 균형도 분석</h3>
+                                    <div class="chart-container-radar" style="position:relative; height:300px; width:100%; display:flex; justify-content:center;">
+                                        <canvas id="coverageRadarChart"></canvas>
+                                    </div>
+                                    <p class="chart-desc text-center mt-sm text-secondary">타겟 연령대 대비 암진단비가 조금 부족합니다.</p>
+                                </div>
+                                <div class="glass-panel chart-panel flex-col" style="display:flex; flex-direction:column;">
+                                    <h3 style="margin-bottom:20px;">연도별 해약환급금 예시</h3>
+                                    <div class="refund-table-container" style="flex:1; overflow-y:auto;">
+                                        <table class="glass-table w-full">
+                                            <thead>
+                                                <tr><th>경과기간</th><th>납입보험료</th><th>해약환급금</th><th>환급률</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td>5년</td><td>2,700,000</td><td>1,080,000</td><td>40.0%</td></tr>
+                                                <tr><td>10년</td><td>5,400,000</td><td>4,590,000</td><td>85.0%</td></tr>
+                                                <tr><td>20년</td><td>10,800,000</td><td>10,800,000</td><td>100.0%</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="action-buttons-row mt-md" style="display:flex; gap:10px; margin-top:20px;">
+                                        <button class="btn-outline w-full" style="flex:1; display:flex; justify-content:center; align-items:center; gap:8px;"><i data-lucide="file-down"></i> PDF 발행</button>
+                                        <button class="btn-accent w-full" style="flex:1; display:flex; justify-content:center; align-items:center; gap:8px;"><i data-lucide="message-square"></i> 알림톡 전송</button>
+                                    </div>
+                                    <button class="btn-primary w-full mt-sm" id="btn-save-custom-plan" style="margin-top:10px; display:flex; justify-content:center; align-items:center; gap:8px;"><i data-lucide="save"></i> 나만의 플랜으로 저장 (Save As)</button>
+                                </div>
+                            </div>
+                            <div class="step-actions mt-lg" style="display:flex; justify-content:flex-start; margin-top:20px;">
+                                <button class="btn-outline btn-prev-step" data-prev="3"><i data-lucide="arrow-left" style="margin-right:5px;"></i> 상세 설계로 돌아가기</button>
+                            </div>
+                        </div>
+
                     </div>
                 </section>
 
