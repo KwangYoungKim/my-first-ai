@@ -2506,3 +2506,282 @@ button {
         grid-template-columns: 1fr !important;
     }
 }
+
+/* ====================================================
+   TAB 6: COVERAGE ANALYSIS (보장분석 리모델링)
+==================================================== */
+
+.analysis-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100%;
+}
+
+.analysis-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.5rem 2rem;
+}
+
+.customer-search-box {
+    flex: 1;
+    max-width: 400px;
+}
+
+.selected-customer-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 2;
+}
+
+.customer-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-blue);
+}
+
+.info-text h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.info-text p {
+    font-size: 0.85rem;
+}
+
+.comprehensive-score {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-left: 2rem;
+    border-left: 1px solid var(--glass-border);
+    transition: opacity 0.4s ease;
+}
+
+.score-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent-green) 75%, rgba(255, 255, 255, 0.1) 0deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    position: relative;
+}
+
+.score-circle::before {
+    content: '';
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background-color: var(--bg-base);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.score-circle span {
+    position: relative;
+    z-index: 2;
+}
+
+.score-desc span {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+}
+
+.score-desc .status-msg {
+    font-size: 0.8rem;
+}
+
+/* Diagnosis Cards */
+.diagnosis-card, .remodeling-card {
+    padding: 1.8rem;
+    height: 100%;
+}
+
+.badge-warning {
+    background: rgba(249, 115, 22, 0.2);
+    color: var(--accent-orange);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Insights */
+.diagnosis-insights {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.insight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+}
+
+.insight-item.danger {
+    border-left: 4px solid var(--accent-red);
+}
+.insight-item.danger i {
+    color: var(--accent-red);
+}
+.insight-item.warning {
+    border-left: 4px solid var(--accent-orange);
+}
+.insight-item.warning i {
+    color: var(--accent-orange);
+}
+.insight-item.success {
+    border-left: 4px solid var(--accent-green);
+}
+.insight-item.success i {
+    color: var(--accent-green);
+}
+
+.insight-item .text-content strong {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+}
+.insight-item .text-content span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Before & After Board */
+.before-after-board {
+    display: flex;
+    align-items: stretch;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex: 1;
+}
+
+.board-column {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.board-column h4 {
+    text-align: center;
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.board-vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.vs-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--text-secondary);
+}
+
+.premium-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.premium-box.recommended {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.premium-box .label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.premium-box .val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.val-diff {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.val-diff .diff {
+    color: var(--accent-red);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.coverage-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    font-size: 0.9rem;
+}
+
+.coverage-list li {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.diff-up { color: var(--accent-green); font-size: 0.8rem; }
+.diff-down { color: var(--accent-red); font-size: 0.8rem; }
+
+.solution-placeholder {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    transition: opacity 0.5s ease;
+}
+
+.after-content {
+    animation: fadeIn 0.8s ease;
+}

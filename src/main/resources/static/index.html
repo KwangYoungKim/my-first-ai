@@ -13,7 +13,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 
 <body>
@@ -59,6 +59,10 @@
                             <i data-lucide="users"></i>
                             <span>Marketing 고객 관리</span>
                         </a>
+                        <a href="#" class="nav-item" data-tab="analysis">
+                            <i data-lucide="shield-alert"></i>
+                            <span>보장분석 리모델링</span>
+                        </a>
                         <a href="#" class="nav-item" data-tab="subscription">
                             <i data-lucide="file-text"></i>
                             <span>가입설계/청약</span>
@@ -66,11 +70,6 @@
                         <a href="#" class="nav-item" data-tab="calendar">
                             <i data-lucide="calendar"></i>
                             <span>캘린더 & 다이어리</span>
-                        </a>
-
-                        <a href="#" class="nav-item">
-                            <i data-lucide="trending-up"></i>
-                            <span>통계/실적</span>
                         </a>
                         <a href="#" class="nav-item" data-tab="tasks">
                             <i data-lucide="check-square"></i>
@@ -601,6 +600,129 @@
 
                     </div>
                 </section>
+                <!-- TAB 6: COVERAGE ANALYSIS (보장분석 리모델링) -->
+                <section id="tab-analysis" class="tab-pane">
+                    <div class="analysis-workspace">
+                        <!-- Top Header / Customer Search & Score -->
+                        <div class="analysis-header glass-panel">
+                            <div class="customer-search-box glass-search-box">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="analysis-customer-search" placeholder="보장분석 대상 고객 검색 (예: 김고객)">
+                            </div>
+                            <div class="selected-customer-info" style="display:none;" id="analysis-customer-info">
+                                <div class="customer-badge">
+                                    <i data-lucide="user"></i>
+                                </div>
+                                <div class="info-text">
+                                    <h3 id="analysis-customer-name">김고객 님</h3>
+                                    <p class="text-secondary">42세 / 남 / 사무직</p>
+                                </div>
+                                <button class="btn-text-light" id="btn-change-analysis-customer"><i data-lucide="refresh-cw" style="width:16px;"></i> 변경</button>
+                            </div>
+                            <div class="comprehensive-score" id="analysis-score-container" style="opacity:0.3;">
+                                <div class="score-circle">
+                                    <span id="analysis-total-score">--</span>
+                                </div>
+                                <div class="score-desc">
+                                    <span>종합 보장 점수</span>
+                                    <p class="status-msg text-secondary" id="analysis-status-msg">고객을 선택해주세요.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Analysis Content -->
+                        <div class="analysis-main-grid mt-md" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; opacity:0.3; pointer-events:none;" id="analysis-content-area">
+                            <!-- Left: Radar Chart & Current Status -->
+                            <div class="diagnosis-card glass-panel flex-col">
+                                <div class="panel-header mb-md">
+                                    <h3>보장 영역별 진단 (현재 상태)</h3>
+                                    <span class="badge-warning" id="analysis-balance-badge" style="display:none;"><i data-lucide="alert-triangle" style="width:14px; margin-right:4px;"></i> 보장 불균형 발견</span>
+                                </div>
+                                <div class="chart-container-radar" style="position:relative; height:320px; width:100%; display:flex; justify-content:center;">
+                                    <canvas id="analysisRadarChart"></canvas>
+                                </div>
+                                
+                                <div class="diagnosis-insights mt-md" id="analysis-insights" style="visibility:hidden;">
+                                    <div class="insight-item danger">
+                                        <i data-lucide="x-circle"></i>
+                                        <div class="text-content">
+                                            <strong>암 진단비 부족</strong>
+                                            <span>권장 5,000만 원 대비 현재 2,000만 원 (3,000만 원 부족)</span>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item warning">
+                                        <i data-lucide="alert-circle"></i>
+                                        <div class="text-content">
+                                            <strong>뇌/심혈관 진단비 부재</strong>
+                                            <span>가족력 고려 시 필수적으로 보완이 필요합니다.</span>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item success">
+                                        <i data-lucide="check-circle"></i>
+                                        <div class="text-content">
+                                            <strong>실손/수술비 적정</strong>
+                                            <span>주요 수술비 및 의료비 보장이 든든합니다.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Remodeling Simulation (Before & After) -->
+                            <div class="remodeling-card glass-panel flex-col">
+                                <div class="panel-header mb-md">
+                                    <h3>맞춤형 리모델링 솔루션</h3>
+                                    <button class="btn-accent" id="btn-apply-remodeling" style="display:none;"><i data-lucide="sparkles" style="width:16px; margin-right:4px;"></i> AI 솔루션 적용</button>
+                                </div>
+                                
+                                <div class="before-after-board" id="before-after-board" style="display:none;">
+                                    <div class="board-column before">
+                                        <h4>리모델링 전 (현재)</h4>
+                                        <div class="premium-box">
+                                            <span class="label">월 납입 보험료</span>
+                                            <span class="val">124,000원</span>
+                                        </div>
+                                        <ul class="coverage-list">
+                                            <li>암 진단비: 2,000만</li>
+                                            <li class="text-danger">뇌혈관 진단비: 0원</li>
+                                            <li class="text-danger">허혈성 진단비: 0원</li>
+                                            <li>사망 보장: 1억</li>
+                                        </ul>
+                                    </div>
+                                    <div class="board-vs">
+                                        <i data-lucide="arrow-right-circle" class="vs-icon"></i>
+                                    </div>
+                                    <div class="board-column after" id="after-board-column">
+                                        <div class="solution-placeholder" id="solution-placeholder">
+                                            <i data-lucide="mouse-pointer-click" style="width:32px; height:32px; margin-bottom:10px; opacity:0.5;"></i>
+                                            <p style="text-align:center; color:var(--text-secondary);">솔루션 적용을<br>클릭하세요</p>
+                                        </div>
+                                        <div class="after-content" id="after-solution-content" style="display:none;">
+                                            <h4>리모델링 후 (추천)</h4>
+                                            <div class="premium-box recommended">
+                                                <span class="label">월 납입 보험료</span>
+                                                <div class="val-diff">
+                                                    <span class="val">146,000원</span>
+                                                    <span class="diff">(+22,000원)</span>
+                                                </div>
+                                            </div>
+                                            <ul class="coverage-list">
+                                                <li>암 진단비: <strong class="text-success">5,000만</strong> <span class="diff-up">▲</span></li>
+                                                <li>뇌혈관 진단비: <strong class="text-success">2,000만</strong> <span class="diff-up">▲</span></li>
+                                                <li>허혈성 진단비: <strong class="text-success">2,000만</strong> <span class="diff-up">▲</span></li>
+                                                <li>사망 보장: <span class="text-secondary">5,000만</span> <span class="diff-down">▼</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="action-buttons-row mt-auto pt-lg" style="display:none;" id="analysis-action-buttons">
+                                    <button class="btn-outline w-full" style="flex:1; display:flex; justify-content:center; align-items:center; gap:8px;"><i data-lucide="download"></i> 리포트 저장</button>
+                                    <button class="btn-primary w-full" style="flex:2; display:flex; justify-content:center; align-items:center; gap:8px;" id="btn-goto-subscription"><i data-lucide="file-text"></i> 추천 플랜으로 가입설계</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
             </div>
         </main>
@@ -757,7 +879,7 @@
     </div>
 
     <!-- JS Logic Script -->
-    <script src="app.js"></script>
+    <script src="app.js?v=3"></script>
 </body>
 
 </html>

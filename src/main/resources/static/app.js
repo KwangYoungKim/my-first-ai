@@ -82,7 +82,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 calendar: "캘린더 & 다이어리",
                 tasks: "영업 할 일 목록",
                 clients: "Marketing 고객 관리",
-                subscription: "가입설계/청약"
+                subscription: "가입설계/청약",
+                analysis: "보장분석 리모델링"
             };
             pageTitle.textContent = tabNames[tabId];
 
@@ -94,6 +95,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 renderTasks();
             } else if (tabId === "clients") {
                 renderClients();
+            } else if (tabId === "analysis") {
+                initAnalysisTab();
             }
         });
     });
@@ -1208,3 +1211,217 @@ function renderRadarChart() {
 
     radarChartInstance = new Chart(ctx, config);
 }
+
+// ====================================================
+// 10. Coverage Analysis Engine (보장분석 리모델링)
+// ====================================================
+
+    function initAnalysisTab() {
+        const searchInput = document.getElementById("analysis-customer-search");
+        const customerInfo = document.getElementById("analysis-customer-info");
+        const scoreContainer = document.getElementById("analysis-score-container");
+        const contentArea = document.getElementById("analysis-content-area");
+        const btnChangeCustomer = document.getElementById("btn-change-analysis-customer");
+        const btnApplyRemodeling = document.getElementById("btn-apply-remodeling");
+        const afterBoardColumn = document.getElementById("after-board-column");
+        const analysisInsights = document.getElementById("analysis-insights");
+        const balanceBadge = document.getElementById("analysis-balance-badge");
+        const beforeAfterBoard = document.getElementById("before-after-board");
+        const actionButtons = document.getElementById("analysis-action-buttons");
+
+        if (searchInput && !searchInput.dataset.initialized) {
+            searchInput.dataset.initialized = "true";
+
+            const loadDemoData = (name = "김고객 님") => {
+                // 고객 세팅
+                searchInput.parentElement.style.display = "none";
+                customerInfo.style.display = "flex";
+                
+                document.getElementById("analysis-customer-name").textContent = name;
+                
+                // 화면 활성화
+                scoreContainer.style.opacity = "1";
+                contentArea.style.opacity = "1";
+                contentArea.style.pointerEvents = "auto";
+                
+                // 애니메이션 효과로 점수 표시
+                document.getElementById("analysis-status-msg").textContent = "보장 불균형 (위험 수준)";
+                document.getElementById("analysis-status-msg").style.color = "var(--accent-orange)";
+                animateValue("analysis-total-score", 0, 68, 1000);
+                
+                // 차트 및 진단결과 렌더링
+                renderAnalysisRadarChart();
+                
+                setTimeout(() => {
+                    balanceBadge.style.display = "inline-flex";
+                    analysisInsights.style.visibility = "visible";
+                    btnApplyRemodeling.style.display = "inline-flex";
+                    beforeAfterBoard.style.display = "flex";
+                }, 800);
+            };
+
+            searchInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter" && searchInput.value.trim() !== "") {
+                    const keyword = searchInput.value.trim();
+                    const matchedClient = clients.find(c => c.name.includes(keyword) || c.phone.includes(keyword));
+                    
+                    if (matchedClient) {
+                        loadDemoData(matchedClient.name + " 님");
+                    } else {
+                        loadDemoData(keyword + " 님");
+                    }
+                }
+            });
+            
+            // 메뉴 진입 시 자동으로 데모 데이터 로드
+            setTimeout(() => loadDemoData("김고객 님 (데모)"), 100);
+
+            btnChangeCustomer.addEventListener("click", () => {
+                searchInput.parentElement.style.display = "flex";
+                searchInput.value = "";
+                customerInfo.style.display = "none";
+                
+                scoreContainer.style.opacity = "0.3";
+                contentArea.style.opacity = "0.3";
+                contentArea.style.pointerEvents = "none";
+                document.getElementById("analysis-total-score").textContent = "--";
+                document.getElementById("analysis-status-msg").textContent = "고객을 선택해주세요.";
+                document.getElementById("analysis-status-msg").style.color = "var(--text-secondary)";
+                
+                balanceBadge.style.display = "none";
+                analysisInsights.style.visibility = "hidden";
+                btnApplyRemodeling.style.display = "none";
+                beforeAfterBoard.style.display = "none";
+                actionButtons.style.display = "none";
+                
+                document.getElementById("solution-placeholder").style.display = "flex";
+                document.getElementById("after-solution-content").style.display = "none";
+                afterBoardColumn.classList.remove("active");
+                
+                if (window.analysisRadarChartInstance) {
+                    window.analysisRadarChartInstance.destroy();
+                    window.analysisRadarChartInstance = null;
+                }
+            });
+
+            btnApplyRemodeling.addEventListener("click", () => {
+                const placeholder = document.getElementById("solution-placeholder");
+                const afterContent = document.getElementById("after-solution-content");
+                
+                btnApplyRemodeling.innerHTML = `<i data-lucide="loader" class="spin" style="width:16px; margin-right:4px;"></i> AI 분석중...`;
+                
+                setTimeout(() => {
+                    placeholder.style.display = "none";
+                    afterContent.style.display = "block";
+                    afterBoardColumn.classList.add("active");
+                    actionButtons.style.display = "flex";
+                    
+                    btnApplyRemodeling.innerHTML = `<i data-lucide="check" style="width:16px; margin-right:4px;"></i> 솔루션 적용 완료`;
+                    btnApplyRemodeling.classList.replace("btn-accent", "btn-outline");
+                    btnApplyRemodeling.style.color = "var(--accent-green)";
+                    btnApplyRemodeling.style.borderColor = "var(--accent-green)";
+                    
+                    animateValue("analysis-total-score", 68, 95, 1000);
+                    document.getElementById("analysis-status-msg").textContent = "보장 든든 (안전 수준)";
+                    document.getElementById("analysis-status-msg").style.color = "var(--accent-green)";
+                    document.querySelector('.score-circle').style.background = "conic-gradient(var(--accent-blue) 95%, rgba(255, 255, 255, 0.1) 0deg)";
+                    document.querySelector('.score-circle').style.boxShadow = "0 0 15px rgba(59, 130, 246, 0.3)";
+                    
+                    updateAnalysisRadarChartAfter();
+                    lucide.createIcons();
+                }, 1200);
+            });
+            
+            document.getElementById("btn-goto-subscription").addEventListener("click", () => {
+                const navItems = document.querySelectorAll(".nav-item");
+                navItems.forEach(item => {
+                    if(item.getAttribute("data-tab") === "subscription") {
+                        item.click();
+                    }
+                });
+            });
+        }
+    }
+
+function renderAnalysisRadarChart() {
+    const ctx = document.getElementById('analysisRadarChart');
+    if (!ctx) return;
+    
+    if (window.analysisRadarChartInstance) {
+        window.analysisRadarChartInstance.destroy();
+    }
+
+    const data = {
+        labels: ['암 진단비', '뇌혈관 진단비', '허혈성 진단비', '수술비/입원', '사망/후유장해', '실손의료비'],
+        datasets: [{
+            label: '현재 가입 상태',
+            data: [40, 0, 0, 90, 100, 100],
+            backgroundColor: 'rgba(249, 115, 22, 0.3)', // Orange warning
+            borderColor: 'rgba(249, 115, 22, 1)',
+            pointBackgroundColor: 'rgba(249, 115, 22, 1)',
+            pointBorderColor: '#fff',
+            borderWidth: 2
+        }, {
+            label: '연령대 권장 가입금액',
+            data: [100, 100, 100, 100, 100, 100],
+            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            borderColor: 'rgba(255, 255, 255, 0.3)',
+            borderDash: [5, 5],
+            pointBackgroundColor: 'transparent',
+            pointBorderColor: 'transparent',
+            borderWidth: 1
+        }]
+    };
+
+    const config = {
+        type: 'radar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    pointLabels: { color: 'rgba(255,255,255,0.7)', font: { size: 12, family: 'Inter' } },
+                    ticks: { display: false, min: 0, max: 100 }
+                }
+            },
+            plugins: {
+                legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.8)', font: { family: 'Inter', size: 11 } } }
+            }
+        }
+    };
+
+    window.analysisRadarChartInstance = new Chart(ctx, config);
+}
+
+function updateAnalysisRadarChartAfter() {
+    if (window.analysisRadarChartInstance) {
+        window.analysisRadarChartInstance.data.datasets.push({
+            label: '리모델링 추천 솔루션',
+            data: [100, 100, 100, 90, 50, 100],
+            backgroundColor: 'rgba(16, 185, 129, 0.4)', // Green success
+            borderColor: 'rgba(16, 185, 129, 1)',
+            pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+            pointBorderColor: '#fff',
+            borderWidth: 2
+        });
+        window.analysisRadarChartInstance.update();
+    }
+}
+
+function animateValue(id, start, end, duration) {
+    const obj = document.getElementById(id);
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = Math.floor(progress * (end - start) + start);
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+
